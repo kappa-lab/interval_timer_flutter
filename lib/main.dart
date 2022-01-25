@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interval_timer/workout.dart';
+import 'package:wakelock/wakelock.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Wakelock.enable();
+
     return MaterialApp(
       title: 'INTERVAL TIMER',
       theme: ThemeData(
