@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:interval_timer/workout.dart';
 import 'package:wakelock/wakelock.dart';
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Wakelock.enable();
+    // Wakelock.enable();
 
     return MaterialApp(
       title: 'INTERVAL TIMER',
@@ -33,7 +35,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  WorkOut data = WorkOut(1, 1);
+  bool running = false;
+  WorkOut data = WorkOut(const Duration(seconds: 5), 1);
+  late WorkOutTimer timer;
+  String debugMsg = "";
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: ElevatedButton(
                             key: null,
                             onPressed: onStartPressed,
-                            child: const Text("START")))),
-                Text("debug: ${data.reps}"),
+                            child: Text(running ? "STOP" : "START")))),
+                Text("debug: $debugMsg"),
               ]),
           padding: const EdgeInsets.fromLTRB(50.0, 100.0, 50.0, 100.0),
           alignment: Alignment.center,
@@ -92,7 +97,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void onStartPressed() {
     setState(() {
-      data = data.increment();
+      running = !running;
+      if (running) {
+        data = data;
+        timer = WorkOutTimer(data.time, onComplete, onTick);
+        timer.start();
+      } else {
+        timer.stop();
+      }
+    });
+  }
+
+  void onComplete() {
+    setState(() {
+      debugMsg = debugMsg + "---> comp";
+    });
+  }
+
+  void onTick(Timer timer, Duration remain) {
+    setState(() {
+      debugMsg = "tick:${timer.tick}, remain:$remain";
     });
   }
 }
