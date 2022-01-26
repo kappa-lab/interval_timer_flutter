@@ -86,7 +86,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             key: null,
                             onPressed: onStartPressed,
                             child: Text(running ? "STOP" : "START")))),
-                Text("debug: $debugMsg"),
+                Text(
+                  "[debug] $debugMsg",
+                  style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Color(0xFF000000),
+                      fontFamily: "RobotoMono"),
+                ),
               ]),
           padding: const EdgeInsets.fromLTRB(50.0, 100.0, 50.0, 100.0),
           alignment: Alignment.center,
@@ -102,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
         data = data;
         timer = WorkOutTimer(data.time, onComplete, onTick);
         timer.start();
+        debugMsg = "start: ${data.time.inSeconds}";
       } else {
         timer.stop();
       }
@@ -110,13 +117,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void onComplete() {
     setState(() {
-      debugMsg = debugMsg + "---> comp";
+      debugMsg = "comp : 0 ";
+      running = false;
     });
   }
 
   void onTick(Timer timer, Duration remain) {
     setState(() {
-      debugMsg = "tick:${timer.tick}, remain:$remain";
+      int r = (remain.inMilliseconds / 1000.0).round();
+      debugMsg = "run  : ${Duration(seconds: r).inSeconds}";
     });
   }
 }
