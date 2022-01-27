@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Wakelock.enable();
+    Wakelock.enable();
 
     return MaterialApp(
       title: 'INTERVAL TIMER',
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -93,17 +93,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onTimeChanged(String? input) {
-    if (input == null) return;
-    data = WorkOut(Duration(seconds: int.parse(input)), 1);
-    running = false;
-    timer.stop();
+    setState(() {
+      if (input == null) return;
+      data = WorkOut(Duration(seconds: int.parse(input)), 1);
+      remainTime = "${data.time.inSeconds}";
+      debugMsg = "set: ${data.time.inSeconds}";
+    });
   }
 
   void _onStartPressed() {
     setState(() {
       running = !running;
       if (running) {
-        data = data;
         timer = WorkOutTimer(data.time, _onComplete, _onTick);
         timer.start();
         remainTime = "${data.time.inSeconds}";
