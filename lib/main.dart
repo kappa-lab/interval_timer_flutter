@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:interval_timer/workout.dart';
 import 'package:wakelock/wakelock.dart';
+
+import 'indicator.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Wakelock.enable();
+    if (!kIsWeb) Wakelock.enable();
 
     return MaterialApp(
       title: 'INTERVAL TIMER',
@@ -37,14 +40,12 @@ class _MyHomePageState extends State<MyHomePage> {
   WorkOut data = WorkOut(const Duration(seconds: 5), 1);
   late WorkOutTimer timer;
   String remainTime = "5";
+  double progress = 0;
   String debugMsg = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
@@ -53,7 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Center(
             child: Column(
               children: [
-                const Padding(padding: EdgeInsets.all(40.0)),
+                const Padding(padding: EdgeInsets.all(20.0)),
+                CustomPaint(painter: Indicator(progress)),
+                const Padding(padding: EdgeInsets.all(36.0)),
                 Text(
                   remainTime,
                   textAlign: TextAlign.center,
@@ -62,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Color(0xFF000000),
                       fontFamily: "RobotoMono"),
                 ),
-                const Padding(padding: EdgeInsets.all(40.0)),
+                const Padding(padding: EdgeInsets.all(60.0)),
                 ElevatedButton(
                   key: null,
                   onPressed: _onStartPressed,
@@ -71,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Padding(padding: EdgeInsets.all(5.0)),
+          const Padding(padding: EdgeInsets.all(15.0)),
           Text(
             "[debug] $debugMsg",
             style: const TextStyle(
@@ -108,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
         timer = WorkOutTimer(data.time, _onComplete, _onTick);
         timer.start();
         remainTime = "${data.time.inSeconds}";
+        progress = 0.005;
         debugMsg = "start: ${data.time.inSeconds}";
       } else {
         timer.stop();
@@ -119,6 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       remainTime = "0";
       running = false;
+      progress = 1;
+
       debugMsg = "comp : 0 ";
     });
   }
@@ -127,7 +133,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       int r = (remain.inMilliseconds / 1000.0).round();
       int sec = Duration(seconds: r).inSeconds;
+      int end = data.time.inSeconds;
+
+      progress = (end - sec) / end;
       remainTime = "$sec";
+
       debugMsg = "run  : $sec";
     });
   }
