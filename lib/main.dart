@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   WorkOut data = WorkOut(const Duration(seconds: 5), 1);
   late WorkOutTimer timer;
   String remainTime = "5";
+  double progress = 0;
   String debugMsg = "";
 
   @override
@@ -53,7 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Center(
             child: Column(
               children: [
-                const Padding(padding: EdgeInsets.all(40.0)),
+                const Padding(padding: EdgeInsets.all(20.0)),
+                CustomPaint(painter: Indicator(progress)),
+                const Padding(padding: EdgeInsets.all(36.0)),
                 Text(
                   remainTime,
                   textAlign: TextAlign.center,
@@ -62,9 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Color(0xFF000000),
                       fontFamily: "RobotoMono"),
                 ),
-                const Padding(padding: EdgeInsets.all(20.0)),
-                CustomPaint(painter: Indicator()),
-                const Padding(padding: EdgeInsets.all(20.0)),
+                const Padding(padding: EdgeInsets.all(60.0)),
                 ElevatedButton(
                   key: null,
                   onPressed: _onStartPressed,
@@ -73,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Padding(padding: EdgeInsets.all(5.0)),
+          const Padding(padding: EdgeInsets.all(15.0)),
           Text(
             "[debug] $debugMsg",
             style: const TextStyle(
@@ -121,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       remainTime = "0";
       running = false;
+      progress = 1;
       debugMsg = "comp : 0 ";
     });
   }
@@ -130,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
       int r = (remain.inMilliseconds / 1000.0).round();
       int sec = Duration(seconds: r).inSeconds;
       remainTime = "$sec";
+      progress = (5 - sec) / 5;
       debugMsg = "run  : $sec";
     });
   }
