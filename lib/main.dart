@@ -111,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
         timer = WorkOutTimer(data.time, _onComplete, _onTick);
         timer.start();
         remainTime = "${data.time.inSeconds}";
+        progress = 0.005;
         debugMsg = "start: ${data.time.inSeconds}";
       } else {
         timer.stop();
@@ -123,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
       remainTime = "0";
       running = false;
       progress = 1;
+
       debugMsg = "comp : 0 ";
     });
   }
@@ -131,8 +133,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       int r = (remain.inMilliseconds / 1000.0).round();
       int sec = Duration(seconds: r).inSeconds;
+      int end = data.time.inSeconds;
+
+      progress = (end - sec) / end;
       remainTime = "$sec";
-      progress = (5 - sec) / 5;
+
       debugMsg = "run  : $sec";
     });
   }
