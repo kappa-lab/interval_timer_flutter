@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:interval_timer/workout.dart';
 import 'package:wakelock/wakelock.dart';
 
+import 'indicator.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -60,7 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Color(0xFF000000),
                       fontFamily: "RobotoMono"),
                 ),
-                const Padding(padding: EdgeInsets.all(40.0)),
+                const Padding(padding: EdgeInsets.all(20.0)),
+                CustomPaint(painter: Indicator()),
+                const Padding(padding: EdgeInsets.all(20.0)),
                 ElevatedButton(
                   key: null,
                   onPressed: _onStartPressed,
