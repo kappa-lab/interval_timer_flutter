@@ -40,10 +40,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool running = false;
   WorkOut data = WorkOut(const Duration(seconds: 5), 1);
   late WorkOutTimer timer;
-  String remainTime = "5";
+  late String remainTime = data.time.inSeconds.toString();
   double progress = 0;
-
   double newProgress = 0.0;
+
   late final AnimationController percentageAnimationController =
       AnimationController(vsync: this, duration: const Duration(seconds: 1))
         ..addListener(() {
@@ -79,7 +79,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
                 const Padding(padding: EdgeInsets.all(60.0)),
                 ElevatedButton(
-                  key: null,
                   onPressed: _onStartPressed,
                   child: Text(running ? "STOP" : "START"),
                 ),
@@ -124,9 +123,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         timer.start();
         remainTime = "${data.time.inSeconds}";
         progress = 0.005;
-
-        int end = data.time.inSeconds;
-        newProgress = 0.005;
 
         debugMsg = "start: ${data.time.inSeconds}";
       } else {
