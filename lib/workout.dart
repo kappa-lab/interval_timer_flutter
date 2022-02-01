@@ -14,35 +14,36 @@ class WorkOut {
 class WorkOutTimer {
   final Duration _duration;
   final Duration _tickInterval = const Duration(seconds: 1);
-  Timer? timer;
-  Timer? ticker;
-  Stopwatch stopwatch = Stopwatch();
+  Timer? _timer;
+  Timer? _ticker;
+  final Stopwatch _stopwatch = Stopwatch();
+
   void Function() onComplete;
   void Function(Timer timer, Duration remain) onTick;
 
   WorkOutTimer(this._duration, this.onComplete, this.onTick);
 
   void start() {
-    timer = Timer(_duration, _onComplete);
-    ticker = Timer.periodic(_tickInterval, _onTick);
-    stopwatch
+    _timer = Timer(_duration, _onComplete);
+    _ticker = Timer.periodic(_tickInterval, _onTick);
+    _stopwatch
       ..reset()
       ..start();
   }
 
   void stop() {
-    timer?.cancel();
-    ticker?.cancel();
-    stopwatch.stop();
+    _timer?.cancel();
+    _ticker?.cancel();
+    _stopwatch.stop();
   }
 
   void _onComplete() {
     onComplete.call();
-    ticker?.cancel();
-    stopwatch.stop();
+    _ticker?.cancel();
+    _stopwatch.stop();
   }
 
   void _onTick(Timer timer) {
-    onTick.call(timer, _duration - stopwatch.elapsed);
+    onTick.call(timer, _duration - _stopwatch.elapsed);
   }
 }

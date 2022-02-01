@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -35,12 +36,23 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool running = false;
   WorkOut data = WorkOut(const Duration(seconds: 5), 1);
   late WorkOutTimer timer;
-  String remainTime = "5";
+  late String remainTime = data.time.inSeconds.toString();
   double progress = 0;
+  double newProgress = 0.0;
+
+  late final AnimationController percentageAnimationController =
+      AnimationController(vsync: this, duration: const Duration(seconds: 1))
+        ..addListener(() {
+          setState(() {
+            progress = lerpDouble(
+                progress, newProgress, percentageAnimationController.value)!;
+          });
+        });
+
   String debugMsg = "";
 
   @override
@@ -67,7 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const Padding(padding: EdgeInsets.all(60.0)),
                 ElevatedButton(
-                  key: null,
                   onPressed: _onStartPressed,
                   child: Text(running ? "STOP" : "START"),
                 ),
@@ -112,6 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
         timer.start();
         remainTime = "${data.time.inSeconds}";
         progress = 0.005;
+
         debugMsg = "start: ${data.time.inSeconds}";
       } else {
         timer.stop();
@@ -123,8 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       remainTime = "0";
       running = false;
-      progress = 1;
-
+      newProgress = 1;
+      percentageAnimationController.forward(from: 0.0);
       debugMsg = "comp : 0 ";
     });
   }
@@ -135,8 +147,10 @@ class _MyHomePageState extends State<MyHomePage> {
       int sec = Duration(seconds: r).inSeconds;
       int end = data.time.inSeconds;
 
-      progress = (end - sec) / end;
+      newProgress = (end - sec) / end;
       remainTime = "$sec";
+
+      percentageAnimationController.forward(from: 0.0);
 
       debugMsg = "run  : $sec";
     });
