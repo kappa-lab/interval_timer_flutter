@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_timer/workout.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -76,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: Column(
                 children: [
                   const Padding(padding: EdgeInsets.all(20.0)),
-                  CustomPaint(painter: Indicator(_viewModel.progress)),
+                  CustomPaint(painter: TimeIndicator(_viewModel.progress)),
                   const Padding(padding: EdgeInsets.all(36.0)),
                   Text(
                     _viewModel.remainTime,
@@ -86,7 +87,33 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         color: Color(0xFFCCCCCC),
                         fontFamily: "RobotoMono"),
                   ),
-                  const Padding(padding: EdgeInsets.all(60.0)),
+                  const Padding(padding: EdgeInsets.all(50.0)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/run.svg',
+                        semanticsLabel: 'run',
+                        height: 20,
+                      ),
+                      SvgPicture.asset(
+                        'assets/rest.svg',
+                        semanticsLabel: 'run',
+                        height: 20,
+                      ),
+                      SvgPicture.asset(
+                        'assets/run.svg',
+                        semanticsLabel: 'run',
+                        height: 20,
+                      ),
+                      SvgPicture.asset(
+                        'assets/rest.svg',
+                        semanticsLabel: 'run',
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                  const Padding(padding: EdgeInsets.all(25.0)),
                   ElevatedButton(
                     onPressed: _onStartPressed,
                     child: Text(_running ? "STOP" : "START"),

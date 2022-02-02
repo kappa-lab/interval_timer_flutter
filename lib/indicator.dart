@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Indicator extends CustomPainter {
+class TimeIndicator extends CustomPainter {
   final double _progress;
 
   double get progress => _progress;
 
-  Indicator(this._progress);
+  TimeIndicator(this._progress);
 
   @override
   void paint(Canvas canvas, Size size) {
