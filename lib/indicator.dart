@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TimeIndicator extends CustomPainter {
   final double _progress;
@@ -28,4 +29,32 @@ class TimeIndicator extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+List<Widget> genRepIndicator(int reps, int current) {
+  final List<Widget> list = [];
+  for (var i = 0; i < reps - 1; i++) {
+    list.add(SvgPicture.asset(
+      'assets/run.svg',
+      semanticsLabel: 'run',
+      height: 20,
+    ));
+    list.add(
+      SvgPicture.asset(
+        'assets/rest.svg',
+        semanticsLabel: 'rest',
+        height: 20,
+      ),
+    );
+  }
+
+  list.add(
+    SvgPicture.asset(
+      'assets/last_run.svg',
+      semanticsLabel: 'lastRun',
+      height: 20,
+    ),
+  );
+
+  return list;
 }

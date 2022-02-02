@@ -39,16 +39,20 @@ class MyHomePage extends StatefulWidget {
 
 class _ViewModel {
   String remainTime;
+  int reps = 0;
   double progress = 0.0;
   double nextProgress = 0.0;
-  _ViewModel(this.remainTime);
+  _ViewModel(this.remainTime, this.reps);
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool _running = false;
-  WorkOut _data = WorkOut(const Duration(seconds: 5), 1);
+  WorkOut _data = WorkOut(const Duration(seconds: 5), 2);
   late WorkOutTimer timer;
-  late _ViewModel _viewModel = _ViewModel(_data.time.inSeconds.toString());
+  late _ViewModel _viewModel = _ViewModel(
+    _data.time.inSeconds.toString(),
+    _data.reps,
+  );
 
   late final AnimationController percentageAnimationController =
       AnimationController(vsync: this, duration: const Duration(seconds: 1))
@@ -90,28 +94,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   const Padding(padding: EdgeInsets.all(50.0)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/run.svg',
-                        semanticsLabel: 'run',
-                        height: 20,
-                      ),
-                      SvgPicture.asset(
-                        'assets/rest.svg',
-                        semanticsLabel: 'run',
-                        height: 20,
-                      ),
-                      SvgPicture.asset(
-                        'assets/run.svg',
-                        semanticsLabel: 'run',
-                        height: 20,
-                      ),
-                      SvgPicture.asset(
-                        'assets/rest.svg',
-                        semanticsLabel: 'run',
-                        height: 20,
-                      ),
-                    ],
+                    children: genRepIndicator(_viewModel.reps, 0),
                   ),
                   const Padding(padding: EdgeInsets.all(25.0)),
                   ElevatedButton(
@@ -163,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     setState(() {
       _running = !_running;
       if (_running) {
-        _viewModel = _ViewModel(_data.time.inSeconds.toString())
+        _viewModel = _ViewModel(_data.time.inSeconds.toString(), _data.reps)
           ..progress = 0.005;
         timer = WorkOutTimer(_data.time, _onComplete, _onTick);
         timer.start();
