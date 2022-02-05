@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   wakelock: ^0.6.1
   flutter_svg: ^1.0.3
+  audioplayers: ^0.20.1
 
 dev_dependencies:
   flutter_test:

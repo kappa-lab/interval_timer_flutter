@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_timer/workout.dart';
 import 'package:wakelock/wakelock.dart';
 
+import 'audio.dart';
 import 'indicator.dart';
 
 void main() {
@@ -53,6 +55,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _data.time.inSeconds.toString(),
     _data.reps,
   );
+
+  late final SEPlayer se = SEPlayer();
+
+//_cache.loadAll([SOUND_DATA_DOWN, SOUND_DATA_UP]);
+// _cache.play(SOUND_DATA_UP);
 
   late final AnimationController percentageAnimationController =
       AnimationController(vsync: this, duration: const Duration(seconds: 1))
@@ -150,6 +157,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ..progress = 0.005;
         timer = WorkOutTimer(_data.time, _onComplete, _onTick);
         timer.start();
+        se.playStart();
 
         debugMsg = "start: ${_data.time.inSeconds}";
       } else {
@@ -164,6 +172,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _viewModel.remainTime = "0";
       _viewModel.nextProgress = 1;
       percentageAnimationController.forward(from: 0.0);
+      se.playComplete();
+
       debugMsg = "comp : 0 ";
     });
   }
@@ -178,6 +188,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _viewModel.remainTime = "$sec";
 
       percentageAnimationController.forward(from: 0.0);
+
+      if (sec <= 3) se.playTick();
 
       debugMsg = "run  : $sec";
     });
