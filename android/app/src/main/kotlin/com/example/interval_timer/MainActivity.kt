@@ -1,4 +1,4 @@
-package com.kappa-lab.interval_timer
+package com.kappaLab.interval_timer
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.kappa-lab.interval_timer"
+        applicationId "com.kappaLab.interval_timer"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
