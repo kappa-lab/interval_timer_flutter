@@ -1,10 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_timer/workout.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -58,17 +57,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   late final SEPlayer se = SEPlayer();
 
-//_cache.loadAll([SOUND_DATA_DOWN, SOUND_DATA_UP]);
-// _cache.play(SOUND_DATA_UP);
-
-  late final AnimationController percentageAnimationController =
+  late final AnimationController animCtrl =
       AnimationController(vsync: this, duration: const Duration(seconds: 1))
         ..addListener(() {
           setState(() {
             _viewModel.progress = lerpDouble(
               _viewModel.progress,
               _viewModel.nextProgress,
-              percentageAnimationController.value,
+              animCtrl.value,
             )!;
           });
         });
@@ -140,6 +136,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    animCtrl.dispose();
+
+    super.dispose();
+  }
+
   void _onTimeChanged(String? input) {
     setState(() {
       if (input == null) return;
@@ -153,13 +157,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     setState(() {
       _running = !_running;
       if (_running) {
-        _viewModel = _ViewModel(_data.time.inSeconds.toString(), _data.reps)
-          ..progress = 0.005;
         timer = WorkOutTimer(_data.time, _onComplete, _onTick);
         timer.start();
+        int sec = 1;
+        int end = _data.time.inSeconds;
+        _viewModel = _ViewModel(
+          _data.time.inSeconds.toString(),
+          _data.reps,
+        )..nextProgress = sec / end;
+        animCtrl.forward(from: 0.0);
         se.playStart();
 
         debugMsg = "start: ${_data.time.inSeconds}";
+        log("start  : $debugMsg");
       } else {
         timer.stop();
       }
@@ -171,10 +181,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _running = false;
       _viewModel.remainTime = "0";
       _viewModel.nextProgress = 1;
-      percentageAnimationController.forward(from: 0.0);
+      animCtrl.forward(from: 0.0);
       se.playComplete();
 
       debugMsg = "comp : 0 ";
+      log("comp");
     });
   }
 
@@ -184,14 +195,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       int sec = Duration(seconds: r).inSeconds;
       int end = _data.time.inSeconds;
 
-      _viewModel.nextProgress = (end - sec) / end;
+      _viewModel.nextProgress = (end - sec + 1) / end;
       _viewModel.remainTime = "$sec";
 
-      percentageAnimationController.forward(from: 0.0);
+      animCtrl.forward(from: 0.0);
 
       if (sec <= 3) se.playTick();
 
-      debugMsg = "run  : $sec";
+      debugMsg = "tick  : $sec";
+      log(debugMsg);
     });
   }
 }
