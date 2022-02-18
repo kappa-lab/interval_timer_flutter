@@ -9,6 +9,7 @@ import 'package:wakelock/wakelock.dart';
 
 import 'audio.dart';
 import 'indicator.dart';
+import 'localstorage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,12 +49,22 @@ class _ViewModel {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool _running = false;
-  WorkOut _data = WorkOut(const Duration(seconds: 5), 2);
+  WorkOut _data = LocalStorage.read();
   late WorkOutTimer timer;
   late _ViewModel _viewModel = _ViewModel(
     _data.time.inSeconds.toString(),
     _data.reps,
   );
+
+  _init() async {
+    await LocalStorage.init();
+    _data = LocalStorage.read();
+    _viewModel = _ViewModel(
+      _data.time.inSeconds.toString(),
+      _data.reps,
+    );
+    setState(() {});
+  }
 
   late final SEPlayer se = SEPlayer();
 
@@ -70,6 +81,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         });
 
   String debugMsg = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +164,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void _onTimeChanged(String? input) {
     setState(() {
       if (input == null) return;
-      _data = WorkOut(Duration(seconds: int.parse(input)), 1);
-      _viewModel.remainTime = "${_data.time.inSeconds}";
-      debugMsg = "set: ${_data.time.inSeconds}";
+      try {
+        _data = WorkOut(Duration(seconds: int.parse(input)), 1);
+        _viewModel.remainTime = "${_data.time.inSeconds}";
+        LocalStorage.save(_data);
+        debugMsg = "set: ${_data.time.inSeconds}";
+      } catch (e) {
+        log("onTimeChanged Error:$e");
+      }
     });
   }
 
